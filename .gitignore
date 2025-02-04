@@ -1,0 +1,7 @@
+.aider*
+.env
+venv
+.venv
+.sesskey
+__pycache__
+llms-ctx.txt
