@@ -1,2 +1,5 @@
 python-fasthtml
 uvicorn>=0.29
+solana==0.29.0
+solders==0.15.1
+base58==2.1.1
