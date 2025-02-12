@@ -38,8 +38,8 @@ def get_root():
         """)
     )
 
-@rt('/create_wallet', method='POST')
-def create_wallet():
+@rt('/create_wallet')
+def post():
     pubkey = wallet_manager.create_new()
     return Div(
         H3("New Wallet Created"),
@@ -57,8 +57,8 @@ def get_balance(pubkey: str):
     balance = solana.get_balance(Pubkey.from_string(pubkey)).value / 1e9
     return P(f"Balance: {balance:.6f} SOL")
 
-@rt('/send/{pubkey}', method='POST')
-def send_sol(pubkey: str, to: str = Form(), amount: float = Form()):
+@rt('/send/{pubkey}')
+def post(pubkey: str, to: str = Form(), amount: float = Form()):
     try:
         keypair = Keypair.from_bytes(bytes.fromhex(wallet_manager.wallets[pubkey]))
         tx = solana.transfer(
