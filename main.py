@@ -10,7 +10,7 @@ solana = Client("https://api.devnet.solana.com")
 class WalletManager:
     def __init__(self):
         self.wallets = {}
-        
+
     def create_new(self):
         keypair = Keypair()
         pubkey = str(keypair.pubkey())
@@ -20,7 +20,7 @@ class WalletManager:
 wallet_manager = WalletManager()
 
 @rt('/')
-def get():
+def get_root():
     return Div(
         H1("Solana Blockchain Demo"),
         Div(
@@ -29,7 +29,7 @@ def get():
             class_="box"
         ),
         Div(id="actions", class_="box hidden"),
-        script=Script("""
+        Script("""
             htmx.on('htmx:afterSwap', function(evt) {
                 if(evt.detail.target.id === 'wallet-section') {
                     document.getElementById('actions').classList.remove('hidden');
@@ -48,8 +48,7 @@ def create_wallet():
         Form(
             Input(type="text", name="to", placeholder="Destination Public Key"),
             Input(type="number", name="amount", placeholder="Amount in SOL", step="0.000001"),
-            Button("Send SOL"),
-            hx_post=f"/send/{pubkey}"
+            Button("Send SOL", hx_post=f"/send/{pubkey}")
         )
     )
 
