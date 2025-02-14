@@ -60,7 +60,12 @@ def post(session):
         Form(
             Input(type="text", name="to", placeholder="Destino"),
             Input(type="number", name="amount", placeholder="Cantidad SOL", step="0.000001"),
-            Button("Enviar SOL", hx_post=f"/send/{pubkey}")
+            Div(
+                Button("Enviar SOL", hx_post=f"/send/{pubkey}"),
+                Button("Recrear Wallet", hx_post="/recreate_wallet",
+                      hx_target="#wallet-section", hx_swap="outerHTML"),
+                style="display: flex; gap: 10px;"
+            )
         )
     )
 
@@ -77,7 +82,12 @@ def post(session):
         Form(
             Input(type="text", name="to", placeholder="Destino"),
             Input(type="number", name="amount", placeholder="Cantidad SOL", step="0.000001"),
-            Button("Enviar SOL", hx_post=f"/send/{pubkey}")
+            Div(
+                Button("Enviar SOL", hx_post=f"/send/{pubkey}"),
+                Button("Recrear Wallet", hx_post="/recreate_wallet",
+                      hx_target="#wallet-section", hx_swap="outerHTML"),
+                style="display: flex; gap: 10px;"
+            )
         )
     )
 
