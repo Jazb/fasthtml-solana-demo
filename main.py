@@ -4,17 +4,21 @@ from solders.keypair import Keypair
 from solders.pubkey import Pubkey
 import base58
 
-app, rt = fast_app()
+app, rt = fast_app(secret_key="tu_clave_secreta_aqui", session_cookie="session")
 solana = Client("https://api.devnet.solana.com")
 
 class WalletManager:
     def __init__(self):
         self.wallets = {}
 
-    def create_new(self):
+    def create_new(self, session):
+        if 'wallet' in session:
+            return session['wallet']['pubkey']
+        
         keypair = Keypair()
         pubkey = str(keypair.pubkey())
         self.wallets[pubkey] = bytes(keypair).hex()
+        session['wallet'] = {'pubkey': pubkey, 'private_key': self.wallets[pubkey]}
         return pubkey
 
 wallet_manager = WalletManager()
@@ -39,16 +43,41 @@ def get_root():
     )
 
 @rt('/create_wallet')
-def post():
-    pubkey = wallet_manager.create_new()
+def post(session):
+    if 'wallet' in session:
+        return Div(
+            P("¡Ya tienes una wallet!"),
+            Button("Recrear Wallet", hx_post="/recreate_wallet",
+                   hx_target="#wallet-section", hx_swap="outerHTML"),
+            class_="existing-wallet"
+        )
+    
+    pubkey = wallet_manager.create_new(session)
     return Div(
-        H3("New Wallet Created"),
-        Pre(f"Public Key: {pubkey}"),
-        Button("Check Balance", hx_get=f"/balance/{pubkey}"),
+        H3("Nueva Wallet Creada"),
+        Pre(f"Llave pública: {pubkey}"),
+        Button("Ver Balance", hx_get=f"/balance/{pubkey}"),
         Form(
-            Input(type="text", name="to", placeholder="Destination Public Key"),
-            Input(type="number", name="amount", placeholder="Amount in SOL", step="0.000001"),
-            Button("Send SOL", hx_post=f"/send/{pubkey}")
+            Input(type="text", name="to", placeholder="Destino"),
+            Input(type="number", name="amount", placeholder="Cantidad SOL", step="0.000001"),
+            Button("Enviar SOL", hx_post=f"/send/{pubkey}")
+        )
+    )
+
+@rt('/recreate_wallet')
+def post(session):
+    if 'wallet' in session:
+        del session['wallet']
+    
+    pubkey = wallet_manager.create_new(session)
+    return Div(
+        H3("Nueva Wallet Creada"),
+        Pre(f"Llave pública: {pubkey}"),
+        Button("Ver Balance", hx_get=f"/balance/{pubkey}"),
+        Form(
+            Input(type="text", name="to", placeholder="Destino"),
+            Input(type="number", name="amount", placeholder="Cantidad SOL", step="0.000001"),
+            Button("Enviar SOL", hx_post=f"/send/{pubkey}")
         )
     )
 
