@@ -1,5 +1,4 @@
-fasthtml
-solana-py
+python-fasthtml
+solana
 solders
 base58
-uvicorn
