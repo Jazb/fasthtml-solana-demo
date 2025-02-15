@@ -3,23 +3,12 @@ from solana.rpc.api import Client
 from solders.keypair import Keypair
 from solders.pubkey import Pubkey
 import base58
+from core.config import get_settings
+from services.wallet_service import WalletManager
 
-app, rt = fast_app(secret_key="tu_clave_secreta_aqui", session_cookie="session")
-solana = Client("https://api.devnet.solana.com")
-
-class WalletManager:
-    def __init__(self):
-        self.wallets = {}
-
-    def create_new(self, session):
-        if 'wallet' in session:
-            return session['wallet']['pubkey']
-        
-        keypair = Keypair()
-        pubkey = str(keypair.pubkey())
-        self.wallets[pubkey] = bytes(keypair).hex()
-        session['wallet'] = {'pubkey': pubkey, 'private_key': self.wallets[pubkey]}
-        return pubkey
+settings = get_settings()
+app, rt = fast_app(secret_key=settings.SECRET_KEY, session_cookie=settings.SESSION_COOKIE)
+solana = Client(settings.SOLANA_RPC_URL)
 
 wallet_manager = WalletManager()
 
@@ -99,7 +88,7 @@ def get_balance(pubkey: str):
 @rt('/send/{pubkey}')
 def post(pubkey: str, to: str = Form(), amount: float = Form()):
     try:
-        keypair = Keypair.from_bytes(bytes.fromhex(wallet_manager.wallets[pubkey]))
+        keypair = wallet_manager.get_keypair(pubkey)
         tx = solana.transfer(
             keypair,
             Pubkey.from_string(to),
