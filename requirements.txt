@@ -1,4 +1,8 @@
-python-fasthtml
-solana
-solders
-base58
+python-fasthtml==3.2.0
+solana==0.25.0
+solders==0.16.0
+cryptography==41.0.7
+pydantic==2.5.3
+python-dotenv==1.0.0
+uvicorn==0.24.0
+httpx==0.26.0
