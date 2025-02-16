@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     # Solana settings
     SOLANA_RPC_URL: str = "https://api.devnet.solana.com"
     SOLANA_NETWORK: str = "devnet"
+    SOLANA_RPC: str = "https://api.mainnet-beta.solana.com"
+    MAX_SOL: str = "100"
     
     # Security
     ENCRYPTION_KEY: str = "your-encryption-key-here"
@@ -19,6 +21,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "allow"
 
 @lru_cache()
 def get_settings():
