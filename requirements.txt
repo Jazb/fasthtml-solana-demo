@@ -3,6 +3,7 @@ solana
 solders
 cryptography
 pydantic
+pydantic-settings
 python-dotenv
 uvicorn
 httpx
